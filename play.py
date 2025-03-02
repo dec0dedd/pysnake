@@ -1,0 +1,87 @@
+import pygame
+import sys
+from typing import Tuple
+
+from game_env import SnakeEnv
+from const import Directions, Colors
+
+import numpy as np
+
+TILE_SIZE = 20
+
+window_x = 720
+window_y = 480
+assert window_x % TILE_SIZE == 0 and window_y % TILE_SIZE == 0
+
+env = SnakeEnv()
+obs, info = env.reset()
+direction = Directions.DOWN
+
+errors = pygame.init()
+pygame.display.set_caption('Snake')
+game_window = pygame.display.set_mode((env.grid_size[0] - 2 * env.tile_size, env.grid_size[1] - 2 * env.tile_size))
+fps_controller = pygame.time.Clock()
+
+
+def block2cord(x: int, y: int, tile_size: int) -> Tuple[int, int]:
+    return ((x-1)*tile_size, (y-1)*tile_size)
+
+
+while True:
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            pygame.quit()
+            sys.exit()
+        elif event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_UP:
+                direction = Directions.UP
+            elif event.key == pygame.K_RIGHT:
+                direction = Directions.RIGHT
+            elif event.key == pygame.K_DOWN:
+                direction = Directions.DOWN
+            elif event.key == pygame.K_LEFT:
+                direction = Directions.LEFT
+            elif event.key == pygame.K_ESCAPE:
+                pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+    obs, reward, term, trunc, info = env.step(direction)
+
+    if term:
+        pygame.quit()
+        sys.exit()
+
+    game_window.fill(Colors.BLACK.value)
+    for x, y in np.argwhere(obs['snake'] == 1):
+        pygame.draw.rect(
+            game_window,
+            Colors.GREEN.value,
+            pygame.Rect(*block2cord(x, y, env.tile_size), env.tile_size, env.tile_size)
+        )
+
+    for x, y in np.argwhere(obs['snake'] == 2):
+        pygame.draw.rect(
+            game_window,
+            Colors.BLUE.value,
+            pygame.Rect(*block2cord(x, y, env.tile_size), env.tile_size, env.tile_size)
+        )
+
+    assert len(np.argwhere(obs['apple'] == 1)) == 1
+    apple_cords = np.argwhere(obs['apple'] == 1)[0]
+    pygame.draw.rect(
+        game_window,
+        Colors.RED.value,
+        pygame.Rect(*block2cord(apple_cords[0], apple_cords[1], env.tile_size), env.tile_size, env.tile_size)
+    )
+
+    for x in range(1, env.block_size[0] + 1):
+        for y in range(1, env.block_size[1] + 1):
+            pygame.draw.rect(
+                game_window,
+                Colors.BLACK.value,
+                pygame.Rect(*block2cord(x, y, env.tile_size), env.tile_size, env.tile_size),
+                width=1
+            )
+
+    print(env.score)
+    pygame.display.update()
+    fps_controller.tick(10)
