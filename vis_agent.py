@@ -4,6 +4,8 @@ from typing import Tuple
 
 from game_env import SnakeEnv
 from const import Directions, Colors
+from simple_agent import SimpleAgent
+from ppo_agent import PPOAgent
 
 import numpy as np
 
@@ -22,6 +24,9 @@ pygame.display.set_caption('Snake')
 game_window = pygame.display.set_mode((env.grid_size[0] - 2 * env.tile_size, env.grid_size[1] - 2 * env.tile_size))
 fps_controller = pygame.time.Clock()
 
+agent = PPOAgent(env.block_size, "models/model.zip")
+#agent = SimpleAgent(env.block_size)
+
 
 def block2cord(x: int, y: int, tile_size: int) -> Tuple[int, int]:
     return ((x-1)*tile_size, (y-1)*tile_size)
@@ -33,17 +38,10 @@ while True:
             pygame.quit()
             sys.exit()
         elif event.type == pygame.KEYDOWN:
-            if event.key == pygame.K_UP:
-                direction = Directions.UP
-            elif event.key == pygame.K_RIGHT:
-                direction = Directions.RIGHT
-            elif event.key == pygame.K_DOWN:
-                direction = Directions.DOWN
-            elif event.key == pygame.K_LEFT:
-                direction = Directions.LEFT
-            elif event.key == pygame.K_ESCAPE:
+            if event.key == pygame.K_ESCAPE:
                 pygame.event.post(pygame.event.Event(pygame.QUIT))
 
+    direction = agent.act(obs)
     obs, reward, term, trunc, info = env.step(direction)
 
     if term:
@@ -82,6 +80,6 @@ while True:
                 width=1
             )
 
-    print(obs)
+    print(env.score)
     pygame.display.update()
     fps_controller.tick(10)

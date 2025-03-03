@@ -14,4 +14,5 @@ class Colors(Enum):
     BLACK = pygame.Color(0, 0, 0)
     WHITE = pygame.Color(255, 255, 255)
     GREEN = pygame.Color(0, 255, 0)
+    DARK_GREEN = pygame.Color(33, 117, 38)
     BLUE = pygame.Color(0, 0, 255)
