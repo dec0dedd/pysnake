@@ -10,7 +10,7 @@ from ppo_agent import PPOAgent
 import numpy as np
 
 TILE_SIZE = 20
-SAVE_FRAMES = True
+SAVE_FRAMES = False
 
 window_x = 720
 window_y = 480
