@@ -1,15 +1,16 @@
 import pygame
 import sys
 from typing import Tuple
+import os
 
 from game_env import SnakeEnv
 from const import Directions, Colors
-from simple_agent import SimpleAgent
 from ppo_agent import PPOAgent
 
 import numpy as np
 
 TILE_SIZE = 20
+SAVE_FRAMES = True
 
 window_x = 720
 window_y = 480
@@ -24,8 +25,12 @@ pygame.display.set_caption('Snake')
 game_window = pygame.display.set_mode((env.grid_size[0] - 2 * env.tile_size, env.grid_size[1] - 2 * env.tile_size))
 fps_controller = pygame.time.Clock()
 
-agent = PPOAgent(env.block_size, "models/model.zip")
-#agent = SimpleAgent(env.block_size)
+agent = PPOAgent(env.block_size, "models/ppo/model.zip")
+
+frame_count = 0
+
+if SAVE_FRAMES:
+    os.mkdir("frames")
 
 
 def block2cord(x: int, y: int, tile_size: int) -> Tuple[int, int]:
@@ -91,3 +96,8 @@ while True:
     write_score(info['score'][0])
     pygame.display.update()
     fps_controller.tick(10)
+
+    if SAVE_FRAMES:
+        frame_path = os.path.join("frames", f"frame_{frame_count:04d}.png")
+        pygame.image.save(game_window, frame_path)
+        frame_count += 1
