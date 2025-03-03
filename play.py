@@ -27,6 +27,14 @@ def block2cord(x: int, y: int, tile_size: int) -> Tuple[int, int]:
     return ((x-1)*tile_size, (y-1)*tile_size)
 
 
+def write_score(score):
+    font = pygame.font.Font("fonts/ps2p/PressStart2P.ttf", 20)
+    score_surface = font.render("Score: " + str(score), True, Colors.WHITE.value)
+    score_rect = score_surface.get_rect()
+    score_rect.topleft = (10, 10)
+    game_window.blit(score_surface, score_rect)
+
+
 while True:
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -82,6 +90,6 @@ while True:
                 width=1
             )
 
-    print(obs)
+    write_score(info['score'][0])
     pygame.display.update()
     fps_controller.tick(10)

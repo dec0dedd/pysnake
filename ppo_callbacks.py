@@ -8,7 +8,5 @@ class LogSnakeLength(BaseCallback):
     def _on_step(self) -> bool:
         for i in range(len(self.locals['infos'])):
             if 'terminal_observation' in self.locals['infos'][i].keys():
-                #print(self.locals['infos'][i]['score'][0])
                 self.logger.record("snake_score", self.locals['infos'][i]['score'][0])
-                #self.logger.record("snake_length", self.locals['infos'][i]['terminal_observation']['score'][0])
         return True

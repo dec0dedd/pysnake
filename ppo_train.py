@@ -15,7 +15,7 @@ def linear_schedule(initial_value: float):
 
 env = make_vec_env(
     SnakeEnv,
-    n_envs=1,
+    n_envs=4,
 )
 
 env = VecNormalize(
@@ -30,17 +30,17 @@ model = PPO(
     n_steps=256,
     batch_size=128,
     verbose=1,
-    tensorboard_log='ppo_test1',
+    tensorboard_log='logs/ppo_logs',
     learning_rate=linear_schedule(1e-4),
     ent_coef=0.01,
 )
 
 TOTAL_TIMESTEPS = 1_000_000
-SAVE_FREQ = 50_000
+SAVE_FREQ = 200_000
 
 checkpoint_callback = CheckpointCallback(
   save_freq=SAVE_FREQ,
-  save_path="models",
+  save_path="models/ppo",
   save_replay_buffer=True,
   save_vecnormalize=True,
 )
