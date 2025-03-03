@@ -1,4 +1,4 @@
-# 🐍PySnake - RL playing Snake
+# 🐍 PySnake - RL playing Snake
 
 ![PPO playing Snake](gifs/ppo.gif)
 
